@@ -14,3 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+// require_once 'conf/config.php';
+require_once 'conf/autoload.php';
+require_once 'vendor/autoload.php';
