@@ -14,17 +14,3 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-chdir('src/public_html');
-
-$envTestConf = getenv('PHPUNIT_CONF_PATH');
-
-if (file_exists('../conf/config.test.php')) {
-    require_once '../conf/config.test.php';
-} elseif ($envTestConf !== false && file_exists($envTestConf)) {
-    require_once $envTestConf;
-} else {
-    var_dump($envTestConf);
-    die('ERROR: Database config missing');
-}
-
-require_once '../conf/autoload.php';
