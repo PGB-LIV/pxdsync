@@ -10,7 +10,7 @@ $info = new PxdInfo($_GET['pxd']);
 $fileList = array();
 
 $ftpStream = ftp_connect('ftp.pride.ebi.ac.uk', 21);
-if ($ftpStream == false) {
+if (!$ftpStream) {
     die('Remote FTP Server Down');
 }
 

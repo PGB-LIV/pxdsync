@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/**
+ *
+ * @author Andrew Collins
+ */
 namespace pgb_liv\pxdsync\scripts;
 
 use pgb_liv\php_ms\Reader\PxdInfo;
 use pgb_liv\pxdsync\ProteomeExchange\PxdDownload;
+
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
 require_once '../conf/config.php';
 require_once '../conf/autoload.php';
-/**
- *
- * @author Andrew Collins
- */
 
 $lockFile = DATA_PATH_PREFIX . '/.pxdsync/.lock';
 if (! file_exists($lockFile)) {

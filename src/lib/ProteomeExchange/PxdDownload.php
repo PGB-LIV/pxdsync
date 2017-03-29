@@ -39,7 +39,7 @@ class PxdDownload
         }
         
         $ftpStream = ftp_connect('ftp.pride.ebi.ac.uk', 21);
-        if ($ftpStream == false) {
+        if (! $ftpStream) {
             die('Remote FTP Server Down');
         }
         
@@ -75,7 +75,7 @@ class PxdDownload
         ftp_close($ftpStream);
     }
 
-    function downloadFile($src, $dest)
+    public function downloadFile($src, $dest)
     {
         if (file_exists($dest)) {
             return;
