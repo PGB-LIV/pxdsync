@@ -16,6 +16,8 @@
  */
 namespace pgb_liv\pxdsync\ProteomeExchange;
 
+use pgb_liv\php_ms\Reader\PxdInfo;
+
 /**
  *
  * @author Andrew Collins
