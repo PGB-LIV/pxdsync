@@ -3,7 +3,8 @@
 		"vendor-dir" : "../src/vendor"
 	},
 	"require" : {
-		"smarty/smarty" : "3.*"
+		"smarty/smarty" : "3.*",
+		"pgb-liv/php-ms" : "dev-master"
 	},
 	"require-dev" : {
 		"theseer/phpdox" : "0.8.*",
