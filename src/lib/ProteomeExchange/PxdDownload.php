@@ -25,6 +25,10 @@ use pgb_liv\php_ms\Reader\PxdInfo;
 class PxdDownload
 {
 
+    const REMOTE_SIZE = 'remote_size';
+
+    const LOCAL_SIZE = 'local_size';
+
     private $info;
 
     public function __construct(PxdInfo $info)
@@ -53,25 +57,26 @@ class PxdDownload
             $localPath = DATA_PATH_PREFIX . '/' . $this->info->getIdString() . '/' . $file['name'];
             
             $raw = ftp_raw($ftpStream, 'SIZE ' . $remotePath);
-            $file['remote_size'] = substr($raw[0], 4);
-            $file['local_size'] = 0;
+            $file[REMOTE_SIZE] = substr($raw[0], 4);
+            $file[LOCAL_SIZE] = 0;
             
             if (file_exists($localPath)) {
-                $file['local_size'] = filesize($localPath);
+                $file[LOCAL_SIZE] = filesize($localPath);
             }
             
             $attempts = 0;
-            while ($file['local_size'] != $file['remote_size']) {
+            while ($file[LOCAL_SIZE] != $file[REMOTE_SIZE]) {
                 if ($attempts >= 3) {
                     break;
                 }
                 
-                $file['local_size'] = $this->downloadFile($file['location'], 
+                $file[LOCAL_SIZE] = $this->downloadFile($file['location'], 
                     DATA_PATH_PREFIX . '/' . $this->info->getIdString() . '/' . $file['name']);
                 
                 $attempts ++;
             }
         }
+        
         ftp_close($ftpStream);
     }
 

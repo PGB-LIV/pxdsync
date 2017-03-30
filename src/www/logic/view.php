@@ -22,20 +22,20 @@ foreach ($info->getDatasetFileList() as $file) {
     
     $remotePath = str_replace('ftp://ftp.pride.ebi.ac.uk', '', $file['location']);
     $raw = ftp_raw($ftpStream, "SIZE $remotePath");
-    $fileEntry['remote_size'] = substr($raw[0], 4);
+    $fileEntry[PxdDownload::REMOTE_SIZE] = substr($raw[0], 4);
     
     $localPath = DATA_PATH_PREFIX . '/' . $info->getIdString() . '/' . $fileEntry['name'];
     if (file_exists($localPath)) {
-        $fileEntry['local_size'] = filesize($localPath);
+        $fileEntry[PxdDownload::LOCAL_SIZE] = filesize($localPath);
         
-        $fileEntry['isDownloaded'] = $fileEntry['local_size'] == $fileEntry['remote_size'] ? 'Yes' : 'Failed';
+        $fileEntry['isDownloaded'] = $fileEntry[PxdDownload::LOCAL_SIZE] == $fileEntry[PxdDownload::REMOTE_SIZE] ? 'Yes' : 'Failed';
         if ($fileEntry['isDownloaded'] == 'Failed') {
-            $fileEntry['error'] = 'Recieved ' . $fileEntry['local_size'] . '. Expected ' . $fileEntry['remote_size'];
+            $fileEntry['error'] = 'Recieved ' . $fileEntry[PxdDownload::LOCAL_SIZE] . '. Expected ' . $fileEntry[PxdDownload::REMOTE_SIZE];
         }
     } else {
         if (file_exists($localPath . '.part')) {
-            $fileEntry['local_size'] = filesize($localPath . '.part');
-            $fileEntry['error'] = 'Recieved ' . round(($fileEntry['local_size'] / $fileEntry['remote_size']) * 100, 2) .
+            $fileEntry[PxdDownload::LOCAL_SIZE] = filesize($localPath . '.part');
+            $fileEntry['error'] = 'Recieved ' . round(($fileEntry[PxdDownload::LOCAL_SIZE] / $fileEntry[PxdDownload::REMOTE_SIZE]) * 100, 2) .
                  '%';
         }
         
