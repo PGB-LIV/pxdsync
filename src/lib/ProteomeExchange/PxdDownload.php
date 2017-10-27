@@ -57,22 +57,39 @@ class PxdDownload
             $localPath = DATA_PATH_PREFIX . '/' . $this->info->getIdString() . '/' . $file['name'];
             
             $raw = ftp_raw($ftpStream, 'SIZE ' . $remotePath);
-            $file[REMOTE_SIZE] = substr($raw[0], 4);
-            $file[LOCAL_SIZE] = 0;
+            if (is_null($raw)) {
+                throw new \UnexpectedValueException(
+                    'SIZE returned NULL for "(' . gettype($remotePath) . ')' . $remotePath . '"');
+            }
+            
+            $file[self::REMOTE_SIZE] = substr($raw[0], 4);
+            $file[self::LOCAL_SIZE] = 0;
             
             if (file_exists($localPath)) {
-                $file[LOCAL_SIZE] = filesize($localPath);
+                $file[self::LOCAL_SIZE] = filesize($localPath);
+            }
+            
+            if ($file[self::LOCAL_SIZE] == $file[self::REMOTE_SIZE]) {
+                echo 'Skipping ' . $file['name'] . ' (' . $file[self::LOCAL_SIZE] . '/' . $file[self::REMOTE_SIZE] . ')' .
+                     PHP_EOL;
+                continue;
             }
             
             $attempts = 0;
-            while ($file[LOCAL_SIZE] != $file[REMOTE_SIZE]) {
+            while ($file[self::LOCAL_SIZE] != $file[self::REMOTE_SIZE]) {
+                echo 'Downloading ' . $file['name'] . ' (' . $file[self::LOCAL_SIZE] . '/' . $file[self::REMOTE_SIZE] .
+                     ')...';
                 if ($attempts >= 3) {
                     break;
                 }
                 
-                $file[LOCAL_SIZE] = $this->downloadFile($file['location'], 
+                $start = microtime(true);
+                $file[self::LOCAL_SIZE] = $this->downloadFile($file['location'],
                     DATA_PATH_PREFIX . '/' . $this->info->getIdString() . '/' . $file['name']);
                 
+                $duration = microtime(true) - $start;
+                $speed = (($file[self::LOCAL_SIZE] / 1024) / 1024) / $duration;
+                echo ' Done (' . round($speed, 3) . 'MB/s)' . PHP_EOL;
                 $attempts ++;
             }
         }
@@ -91,8 +108,21 @@ class PxdDownload
         $destPart = $dest . '.part';
         $writer = fopen($destPart, 'w');
         
+        if ($writer === false)
+        {
+            return 0;
+        }
+        
         while (! feof($reader)) {
-            fwrite($writer, fread($reader, 4096));
+            $buffer = fread($reader, 1048576);
+            if (! $buffer) {
+                die('read failed ?');
+            }
+            
+            if (! fwrite($writer, $buffer)) {
+                
+                die('write failed?');
+            }
         }
         
         fclose($reader);

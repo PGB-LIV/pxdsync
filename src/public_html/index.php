@@ -20,6 +20,7 @@ ini_set('display_errors', true);
 require_once '../conf/config.php';
 require_once '../conf/autoload.php';
 require_once '../conf/smarty.php';
+require_once '../vendor/autoload.php';
 
 $page = 'welcome';
 

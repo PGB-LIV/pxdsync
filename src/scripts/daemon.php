@@ -22,12 +22,12 @@ namespace pgb_liv\pxdsync\scripts;
 
 use pgb_liv\php_ms\Reader\PxdInfo;
 use pgb_liv\pxdsync\ProteomeExchange\PxdDownload;
-
 error_reporting(E_ALL);
 ini_set('display_errors', true);
 
-require_once '../conf/config.php';
-require_once '../conf/autoload.php';
+require_once dirname(__FILE__) . '/../conf/config.php';
+require_once dirname(__FILE__) . '/../conf/autoload.php';
+require_once dirname(__FILE__) . '/../vendor/autoload.php';
 
 $lockFile = DATA_PATH_PREFIX . '/.pxdsync/.lock';
 if (! file_exists($lockFile)) {
@@ -50,11 +50,23 @@ while (! $terminate) {
     foreach ($jobQueue as $job) {
         echo 'Downloading ' . $job . PHP_EOL;
         
-        $info = new PxdInfo($job);
-        $downloader = new PxdDownload($info);
-        $downloader->downloadAll();
-        
-        unlink(DATA_PATH_PREFIX . '/.pxdsync/.queue/' . $job);
+        try {
+            $info = new PxdInfo($job);
+            $downloader = new PxdDownload($info);
+            $downloader->downloadAll();
+            
+            unlink(DATA_PATH_PREFIX . '/.pxdsync/.queue/' . $job);
+        } catch (\Exception $e) {
+            if ($e->getMessage() == 'Dataset not yet accessible') {
+                echo $job .': '. $e->getMessage() . PHP_EOL;
+                unlink(DATA_PATH_PREFIX . '/.pxdsync/.queue/' . $job);
+                continue;
+            }
+            
+            // ???
+            sleep(600);
+            continue;
+        }
     }
     
     sleep(60);

@@ -74,8 +74,6 @@
 		<mkdir dir="${basedir}/src/www/template_c" />
 		<exec executable="${composer}" taskname="composer">
 			<arg value="install" />
-			<arg value="-d" />
-			<arg path="${basedir}/build" />
 		</exec>
 		<property name="prepare.done" value="true" />
 	</target>

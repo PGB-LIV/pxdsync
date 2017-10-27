@@ -1,5 +1,6 @@
 <?php
 use pgb_liv\php_ms\Reader\PxdInfo;
+use pgb_liv\pxdsync\ProteomeExchange\PxdDownload;
 
 if (! isset($_GET['pxd'])) {
     die('Bad page access');
